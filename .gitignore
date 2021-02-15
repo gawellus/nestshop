@@ -34,3 +34,4 @@ lerna-debug.log*
 !.vscode/extensions.json
 workspace.code-workspace
 .history
+ormconfig.json

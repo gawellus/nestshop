@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { cursorTo } from 'readline';
 import { AddProductToBasketResponse, GetTotalPriceResponse, ListProductsInBasketReponse, RemoveProductToBasketResponse } from 'src/interfaces/basket';
 import { ShopService } from 'src/shop/shop.service';
 import { AddProductDto } from './dto/add-product.dto';
