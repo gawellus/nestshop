@@ -10,13 +10,12 @@ import { ShopItem } from './shop-item.entity';
 export class ShopService {
     //forwardref - circular dependency fix
     constructor(
-        @Inject(forwardRef(() => BasketService)) private basketService: BasketService,
-        @InjectRepository(ShopItem) private shopItemRepository: Repository<ShopItem>
+        @Inject(forwardRef(() => BasketService)) private basketService: BasketService
     ) {        
     }
 
     async getProducts(): Promise<GetListOfProductsResponse> {
-        return await this.shopItemRepository.find();
+        return await ShopItem.find();
     }
 
     async hasProduct(name: string): Promise<boolean> {
@@ -28,11 +27,11 @@ export class ShopService {
     }
 
     async getOneProduct(id: string): Promise<ShopItem> {
-        return this.shopItemRepository.findOneOrFail(id);
+        return ShopItem.findOneOrFail(id);
     }
 
     async removeProduct(id: string) {
-        await this.shopItemRepository.delete(id);
+        await ShopItem.delete(id);
     }
 
     async createDummyProduct(): Promise<ShopItem> {
@@ -41,23 +40,23 @@ export class ShopService {
         newItem.description = 'Czerwony jak cegła!';
         newItem.price = 17;
 
-        await this.shopItemRepository.save(newItem);
+        await newItem.save();
 
         return newItem;
     }
 
     async addBoughtCounter(id: number) {
         //update 1 metodą po id
-        await this.shopItemRepository.update(id, {
+        await ShopItem.update(id, {
             wasEverBought: true
         })
 
         //klasyczny update: pobieranie->update
-        const item = await this.shopItemRepository.findOneOrFail(id);
+        const item = await ShopItem.findOneOrFail(id);
 
         item.boughtCounter++;
 
-        await this.shopItemRepository.save(item);
+        await item.save();
     }
   
 }

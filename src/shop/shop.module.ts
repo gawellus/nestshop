@@ -7,8 +7,7 @@ import { ShopService } from './shop.service';
 
 @Module({
     imports: [
-        forwardRef(() =>  BasketModule), //circular dependency fix
-        TypeOrmModule.forFeature([ShopItem])
+        forwardRef(() =>  BasketModule), //circular dependency fix        
     ],
     controllers: [ShopController],
     providers: [ShopService],
