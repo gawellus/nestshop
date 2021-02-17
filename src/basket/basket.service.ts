@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AddProductToBasketResponse, GetTotalPriceResponse, ListProductsInBasketReponse, RemoveProductToBasketResponse } from 'src/interfaces/basket';
 import { ShopService } from 'src/shop/shop.service';
 import { AddProductDto } from './dto/add-product.dto';
@@ -8,11 +8,11 @@ export class BasketService {
     private items: AddProductDto[] = [];
 
     constructor(
-        @Inject(ShopService) private shopService: ShopService
+        @Inject(forwardRef(() => ShopService)) private shopService: ShopService
     ) {}
 
     add(item: AddProductDto): AddProductToBasketResponse  {
-        const {count, name} = item;
+        const {count, name, id} = item;
         if (
             typeof name !== 'string'
             ||
@@ -30,6 +30,8 @@ export class BasketService {
         }
 
         this.items.push(item);
+
+        this.shopService.addBoughtCounter(id);
 
         return {
             isSuccess: true,
@@ -60,7 +62,7 @@ export class BasketService {
         return this.items;
     }
 
-    getTotalPrice(): GetTotalPriceResponse {
+    async getTotalPrice(): Promise<GetTotalPriceResponse> {
         if (!this.items.every(item => this.shopService.hasProduct(item.name))) {
             //alternatywny produkt, jeśli któregoś nie ma
             const alternativeBasket = this.items.filter(
@@ -74,11 +76,14 @@ export class BasketService {
         }
 
 
-        return this.items
-        .map(item => this.shopService.getPrice
-            (item.name) * item.count * 1.23)
-        .reduce((prev, curr) => prev + curr, 0);
-        
-        
+        return (await Promise.all(this.items
+            .map(async item => (await this.shopService.getPrice(item.name)) * 
+                item.count * 1.23)
+            ))
+            .reduce((prev, curr) => prev + curr, 0);
+    }
+
+    async countPromo(): Promise<number> {
+        return (await this.getTotalPrice()) > 10 ? 1 : 0;
     }
 }
