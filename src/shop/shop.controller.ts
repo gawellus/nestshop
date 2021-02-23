@@ -1,5 +1,6 @@
 import { Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
-import { CreateProductResponse, GetListOfProductsResponse, GetOneProductResponse } from 'src/interfaces/shop';
+import { strict } from 'assert';
+import { CreateProductResponse, GetListOfProductsResponse, GetOneProductResponse, GetPaginatedListOfProductsResponse } from 'src/interfaces/shop';
 import { ShopService } from './shop.service';
 
 @Controller('shop')
@@ -12,9 +13,19 @@ export class ShopController {
 
     }
 
-    @Get('/')
-    getListOfProducts(): Promise<GetListOfProductsResponse> {
-        return this.shopService.getProducts();
+    @Get('/:page')
+    getListOfProducts(
+        @Param('page') page: string
+    ): Promise<GetPaginatedListOfProductsResponse> {
+        return this.shopService.getProducts(Number(page));
+    }
+
+    @Get('/find/:search')
+    findItem(
+        @Param('search') search: string
+    ): Promise<GetListOfProductsResponse> {
+        
+        return this.shopService.findProducts(search);
     }
 
     @Get('/:id')
@@ -35,5 +46,4 @@ export class ShopController {
     createProduct(): Promise<CreateProductResponse>  {
         return this.shopService.createDummyProduct();
     }
-
 }
