@@ -39,11 +39,11 @@ export class ShopService {
         return (await this.getProducts()).items.find(item => item.name === name).price;
     }
 
-    async getOneProduct(id: string): Promise<ShopItem> {
+    async getOneProduct(id: number): Promise<ShopItem> {
         return ShopItem.findOneOrFail(id);
     }
 
-    async removeProduct(id: string) {
+    async removeProduct(id: number) {
         await ShopItem.delete(id);
     }
 

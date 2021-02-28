@@ -4,14 +4,14 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ShopModule } from './shop/shop.module';
 import { BasketModule } from './basket/basket.module';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
     BasketModule,
-    ShopModule,
-    UsersModule,    
-    TypeOrmModule.forRoot()
+    ShopModule,    
+    TypeOrmModule.forRoot(), 
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],

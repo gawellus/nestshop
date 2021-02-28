@@ -1,3 +1,4 @@
+import { BasketItem } from "src/basket/basket-item.entity";
 import { BaseEntity, Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ShopItemDetails } from "./shop-item-details.entity";
 import { ShopSet } from "./shop-set.entity";
@@ -51,4 +52,8 @@ export class ShopItem extends BaseEntity {
     @ManyToMany(type => ShopSet, entity => entity.items)
     @JoinTable()
     sets: ShopSet[];
+
+    @OneToMany(type => BasketItem, entity => entity.shopItem)
+    basketItem: BasketItem
+
 }

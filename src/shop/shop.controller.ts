@@ -32,14 +32,14 @@ export class ShopController {
     getOneProduct(
         @Param('id') id: string
     ): Promise<GetOneProductResponse> {
-        return this.shopService.getOneProduct(id);
+        return this.shopService.getOneProduct(Number(id));
     }
 
     @Delete('/:id')
     removeProduct(
         @Param('id') id: string
     ) {
-        return this.shopService.removeProduct(id);
+        return this.shopService.removeProduct(Number(id));
     }
 
     @Post('/')
