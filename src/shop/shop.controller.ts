@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
+import { Controller, DefaultValuePipe, Delete, Get, HttpStatus, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { strict } from 'assert';
 import { CreateProductResponse, GetListOfProductsResponse, GetOneProductResponse, GetPaginatedListOfProductsResponse } from 'src/interfaces/shop';
 import { ShopService } from './shop.service';
@@ -13,9 +13,9 @@ export class ShopController {
 
     }
 
-    @Get('/:page')
+    @Get('/:page?')
     getListOfProducts(
-        @Param('page') page: string
+        @Param('page', new DefaultValuePipe(1), ParseIntPipe) page: number //default value dla niewymaganego parametru
     ): Promise<GetPaginatedListOfProductsResponse> {
         return this.shopService.getProducts(Number(page));
     }
@@ -30,14 +30,16 @@ export class ShopController {
 
     @Get('/:id')
     getOneProduct(
-        @Param('id') id: string
+        @Param('id', new ParseIntPipe({
+            errorHttpStatusCode: HttpStatus.FORBIDDEN   //np. customowy błąd gdy na wejsciu co innego niz number
+        })) id: number //parsowanie str to int
     ): Promise<GetOneProductResponse> {
         return this.shopService.getOneProduct(Number(id));
     }
 
     @Delete('/:id')
     removeProduct(
-        @Param('id') id: string
+        @Param('id', ParseIntPipe) id: number //parsowanie str to int / wywala blad gdydostanie cos innego niz number
     ) {
         return this.shopService.removeProduct(Number(id));
     }
