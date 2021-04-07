@@ -1,4 +1,4 @@
-import { Controller, DefaultValuePipe, Delete, Get, HttpStatus, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Controller, DefaultValuePipe, Delete, Get, HttpStatus, ImATeapotException, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { strict } from 'assert';
 import { CreateProductResponse, GetListOfProductsResponse, GetOneProductResponse, GetPaginatedListOfProductsResponse } from 'src/interfaces/shop';
 import { ShopService } from './shop.service';
@@ -11,6 +11,11 @@ export class ShopController {
         @Inject(ShopService) private shopService: ShopService
     ) {
 
+    }
+
+    @Get('/test')
+    test() {
+        throw new ImATeapotException('Oh shit!')
     }
 
     @Get('/:page?')
@@ -48,4 +53,6 @@ export class ShopController {
     createProduct(): Promise<CreateProductResponse>  {
         return this.shopService.createDummyProduct();
     }
+
+
 }
