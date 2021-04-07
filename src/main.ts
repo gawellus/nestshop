@@ -1,7 +1,7 @@
 import { ImATeapotException, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ImATeapotExceptionFilter } from './filters/im-a-teapot-exception.filter';
+import { GlobalExceptionFilter } from './filters/global-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,7 +11,7 @@ async function bootstrap() {
     forbidNonWhitelisted: true, //jw
     transform: true             //sam zamienia parametr na typ ktory zadeklarujemy w requescie, np. na number
   }));
-  app.useGlobalFilters(new ImATeapotExceptionFilter);
+  app.useGlobalFilters(new GlobalExceptionFilter);
   await app.listen(3000);
 }
 bootstrap();

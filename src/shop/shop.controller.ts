@@ -15,7 +15,7 @@ export class ShopController {
 
     @Get('/test')
     test() {
-        throw new ImATeapotException('Oh shit!')
+        throw new Error('Oh shit!')
     }
 
     @Get('/:page?')
