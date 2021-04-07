@@ -11,7 +11,7 @@ async function bootstrap() {
     forbidNonWhitelisted: true, //jw
     transform: true             //sam zamienia parametr na typ ktory zadeklarujemy w requescie, np. na number
   }));
-  app.useGlobalFilters(new GlobalExceptionFilter);
+  //app.useGlobalFilters(new GlobalExceptionFilter);
   await app.listen(3000);
 }
 bootstrap();
