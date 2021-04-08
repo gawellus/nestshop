@@ -1,6 +1,10 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { resolve } from 'path';
+import { UseCacheTime } from 'src/decorators/use-cache-time.decorator';
 import { UsePassword } from 'src/decorators/use-password.decorator';
 import { PasswordProtectGuard } from 'src/guards/password-protect.guard';
+import { MyCacheInterceptor } from 'src/interceptors/my-cache.interceptor';
+import { MyTimeoutInterceptor } from 'src/interceptors/my-timeout.interceptor';
 import { AddProductToBasketResponse, GetBasketStatsResponse, GetTotalPriceResponse, ListProductsInBasketReponse, RemoveProductToBasketResponse } from 'src/interfaces/basket';
 import { BasketService } from './basket.service';
 import { AddProductDto } from './dto/add-product.dto';
@@ -46,8 +50,11 @@ export class BasketController {
     @Get('/stats')
     @UseGuards(PasswordProtectGuard)
     @UsePassword('stats')
+    @UseInterceptors(MyTimeoutInterceptor, MyCacheInterceptor)
+    @UseCacheTime(10)
     getStats(): Promise<GetBasketStatsResponse> {
         return this.basketService.getStats();
+        //return new Promise(resolve => {}); //promise, ktory nigdy sie nie zakonczy - do testu timeout
     }
 
     @Get('/:userId')
