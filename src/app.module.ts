@@ -6,6 +6,7 @@ import { ShopModule } from './shop/shop.module';
 import { BasketModule } from './basket/basket.module';
 import { UserModule } from './user/user.module';
 import { CacheModule } from './cache/cache.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { CacheModule } from './cache/cache.module';
     ShopModule,    
     TypeOrmModule.forRoot(), 
     UserModule,
-    CacheModule
+    CacheModule,
+    MailModule
   ],
   controllers: [AppController],
   providers: [AppService],

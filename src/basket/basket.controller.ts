@@ -20,10 +20,10 @@ export class BasketController {
 
     @Post('/')
     addProductToBasket(
-        @Body() item: AddProductDto
-    ): Promise<AddProductToBasketResponse> {
+        @Body() item
+    ): Promise<AddProductToBasketResponse> {        
         return this.basketService.add(item);
-    }
+    }    
 
     @Delete('/clear/:userId')
     clearBasket(

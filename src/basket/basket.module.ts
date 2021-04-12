@@ -1,4 +1,5 @@
 import { forwardRef, Module } from '@nestjs/common';
+import { MailModule } from 'src/mail/mail.module';
 import { ShopModule } from 'src/shop/shop.module';
 import { ShopService } from 'src/shop/shop.service';
 import { UserModule } from 'src/user/user.module';
@@ -8,7 +9,8 @@ import { BasketService } from './basket.service';
 @Module({
     imports: [
         forwardRef(() => ShopModule),
-        forwardRef(() => UserModule)
+        forwardRef(() => UserModule),
+        forwardRef(() => MailModule)
     ],
     controllers: [BasketController],
     providers: [BasketService],
