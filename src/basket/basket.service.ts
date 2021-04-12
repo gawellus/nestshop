@@ -1,5 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { AddProductToBasketResponse, GetBasketStatsResponse, GetTotalPriceResponse, ListProductsInBasketReponse, RemoveProductToBasketResponse } from 'src/interfaces/basket';
+import { MailService } from 'src/mail/mail.service';
 import { ShopItem } from 'src/shop/shop-item.entity';
 import { ShopService } from 'src/shop/shop.service';
 import { UserService } from 'src/user/user.service';
@@ -7,12 +8,14 @@ import { getConnection } from 'typeorm';
 import { runInThisContext } from 'vm';
 import { BasketItem } from './basket-item.entity';
 import { AddProductDto } from './dto/add-product.dto';
+// import {addedToBasketInfoEmailTemplate} from "../templates/email/added-to-basket-info";
 
 @Injectable()
 export class BasketService {
     constructor(
         @Inject(forwardRef(() => ShopService)) private shopService: ShopService,
         @Inject(forwardRef(() => UserService)) private userService: UserService,
+        @Inject(MailService) private mailService: MailService,
     ) {}
 
     async add(product: AddProductDto): Promise<AddProductToBasketResponse>  {
@@ -52,6 +55,9 @@ export class BasketService {
         item.user = user;
 
         await item.save();
+
+        // nie dziala na wsl z mailslurper
+        // await this.mailService.sendMail(user.email, 'Dziękujemy za dodanie do koszyka!', addedToBasketInfoEmailTemplate());
 
         this.shopService.addBoughtCounter(productId);
 
