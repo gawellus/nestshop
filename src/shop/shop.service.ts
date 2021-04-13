@@ -1,22 +1,36 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BasketService } from 'src/basket/basket.service';
+import { MulterDiskUploadedFiles } from 'src/interfaces/files';
 import { GetListOfProductsResponse, GetPaginatedListOfProductsResponse } from 'src/interfaces/shop';
+import { ShopItemInterface } from 'src/interfaces/shop';
 import { getConnection, LessThan, Like } from 'typeorm';
+import { AddProductDto } from './dto/add-product.dto';
 import { ShopItemDetails } from './shop-item-details.entity';
 import { ShopItem } from './shop-item.entity';
+import * as fs from 'fs';
+import * as path from 'path';
+import { storageDir } from 'src/utils/storage';
 
 @Injectable()
 export class ShopService {
-    
     //forwardref - circular dependency fix
     constructor(
         @Inject(forwardRef(() => BasketService)) private basketService: BasketService
-    ) {        
+    ) {
     }
+
+    filter(shopItem: ShopItem): ShopItemInterface {
+        const {id, price, description, name} = shopItem;
+        return {id, price, description, name};
+      }
+    
+      async getItems(): Promise<ShopItemInterface[]> {
+        return (await ShopItem.find()).map(this.filter);
+      }
 
     async getProducts(page: number = 1): Promise<GetPaginatedListOfProductsResponse> {
         const maxPerPage = 2;
-        
+
         const [items, count] = await ShopItem.findAndCount({
             relations: ['details', 'sets'],
             skip: maxPerPage * (page - 1),
@@ -117,6 +131,62 @@ export class ShopService {
             }
         });*/
     }
-  
-}
 
+    async addProduct(req: AddProductDto, files: MulterDiskUploadedFiles): Promise<ShopItemInterface> {
+
+        const photo = files?.photo?.[0] ?? null;
+
+        try {
+
+            const shopItem = new ShopItem();
+            shopItem.name = req.name;
+            shopItem.description = req.description;
+            shopItem.price = req.price;
+
+            if (photo) {
+                shopItem.photoFn = photo.filename;
+            }
+
+            await shopItem.save();
+
+            return this.filter(shopItem);
+
+        } catch (e) {
+            try {
+                if (photo) {
+                    fs.unlinkSync(
+                        path.join(storageDir(), 'product-photos', photo.filename)
+                    );
+                }
+            } catch (e2) { }
+
+            throw e;
+        }
+    }
+
+    async getPhoto(id: string, res: any) {
+        try {
+          const one = await ShopItem.findOne(id);
+    
+          if (!one) {
+            throw new Error('No object found!');
+          }
+    
+          if (!one.photoFn) {
+            throw new Error('No photo in this entity!');
+          }
+    
+          res.sendFile(
+              one.photoFn,
+              {
+                root: path.join(storageDir(), 'product-photos'),
+              },
+          );
+    
+        } catch(e) {
+          res.json({
+            error: e.message,
+          });
+        }
+      }
+}

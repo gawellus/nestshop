@@ -28,6 +28,12 @@ export class ShopItem extends BaseEntity {
     price: number;
 
     @Column({
+        default: null,
+        nullable: true
+    })
+    photoFn: string;
+
+    @Column({
         default: 0
     })
     boughtCounter: number;

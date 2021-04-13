@@ -9,7 +9,10 @@ async function bootstrap() {
     disableErrorMessages: true, //nie pokazuje błedów 
     whitelist: true,            //sprawdza poprawnosc danych w dto
     forbidNonWhitelisted: true, //jw
-    transform: true             //sam zamienia parametr na typ ktory zadeklarujemy w requescie, np. na number
+    transform: true,             //sam zamienia parametr na typ ktory zadeklarujemy w requescie, np. na number
+    transformOptions: {
+      enableImplicitConversion: true,
+    },
   }));
   //app.useGlobalFilters(new GlobalExceptionFilter);
   await app.listen(3000);
