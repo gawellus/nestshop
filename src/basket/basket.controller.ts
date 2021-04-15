@@ -1,11 +1,14 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { resolve } from 'path';
 import { UseCacheTime } from 'src/decorators/use-cache-time.decorator';
 import { UsePassword } from 'src/decorators/use-password.decorator';
+import { UserObj } from 'src/decorators/user-obj.decorator';
 import { PasswordProtectGuard } from 'src/guards/password-protect.guard';
 import { MyCacheInterceptor } from 'src/interceptors/my-cache.interceptor';
 import { MyTimeoutInterceptor } from 'src/interceptors/my-timeout.interceptor';
 import { AddProductToBasketResponse, GetBasketStatsResponse, GetTotalPriceResponse, ListProductsInBasketReponse, RemoveProductToBasketResponse } from 'src/interfaces/basket';
+import { User } from 'src/user/user.entity';
 import { BasketService } from './basket.service';
 import { AddProductDto } from './dto/add-product.dto';
 
@@ -19,10 +22,12 @@ export class BasketController {
     }
 
     @Post('/')
+    @UseGuards(AuthGuard('jwt'))
     addProductToBasket(
-        @Body() item
-    ): Promise<AddProductToBasketResponse> {        
-        return this.basketService.add(item);
+        @Body() item,
+        @UserObj() user: User,
+    ): Promise<AddProductToBasketResponse> {             
+        return this.basketService.add(item, user);
     }    
 
     @Delete('/clear/:userId')

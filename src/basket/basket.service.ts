@@ -3,6 +3,7 @@ import { AddProductToBasketResponse, GetBasketStatsResponse, GetTotalPriceRespon
 import { MailService } from 'src/mail/mail.service';
 import { ShopItem } from 'src/shop/shop-item.entity';
 import { ShopService } from 'src/shop/shop.service';
+import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { getConnection } from 'typeorm';
 import { runInThisContext } from 'vm';
@@ -18,28 +19,21 @@ export class BasketService {
         @Inject(MailService) private mailService: MailService,
     ) {}
 
-    async add(product: AddProductDto): Promise<AddProductToBasketResponse>  {
-        const {count, productId, userId} = product;
+    async add(product: AddProductDto, user: User): Promise<AddProductToBasketResponse>  {
+        const {count, productId} = product;
 
         const shopItem = await this.shopService.getOneProduct(productId);
-        const user = await this.userService.getOneUser(userId);
 
         if (
             typeof productId !== 'number'
-            ||
-            typeof userId !== 'number'
-            ||
+            ||            
             typeof count !== 'number'
             ||
             productId === null
             ||
-            userId === null
-            ||
             count < 1
             ||
             !shopItem
-            ||
-            !user
         ) {
             return {
                 isSuccess: false

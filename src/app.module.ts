@@ -7,6 +7,7 @@ import { BasketModule } from './basket/basket.module';
 import { UserModule } from './user/user.module';
 import { CacheModule } from './cache/cache.module';
 import { MailModule } from './mail/mail.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,7 +16,8 @@ import { MailModule } from './mail/mail.module';
     TypeOrmModule.forRoot(), 
     UserModule,
     CacheModule,
-    MailModule
+    MailModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

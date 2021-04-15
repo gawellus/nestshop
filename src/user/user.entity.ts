@@ -11,6 +11,15 @@ export class User extends BaseEntity {
         length: 255
     })
     email: string;
+    
+    @Column()
+    pwdHash: string;
+
+    @Column({
+        nullable: true,
+        default: null,
+    })
+    currentTokenId: string | null;
 
     @OneToMany(type => BasketItem, entity => entity.user)
     basketItem: BasketItem[];
